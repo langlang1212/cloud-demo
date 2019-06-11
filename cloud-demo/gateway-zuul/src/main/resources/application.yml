@@ -1,0 +1,29 @@
+#zuul的权限控制配置
+server:
+  port: 10010
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+spring:
+  application:
+    name: gateway-zuul
+zuul:    ##zuul默认配置服务id对应/服务id/**
+  prefix: /api
+  routes:
+    user-service:   #下面简化配置
+      path: /user/**
+      serviceId: user-service
+      strip-prefix:  false    #去除前缀
+  ignored-services:       #忽略的微服务
+    - consumer-service
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMillisecond: 6000 # 设置hystrix的超时时间为6000ms
+ribbon:
+  ConnectionTimeOut: 500
+  ReadTimeOut: 2000    #ribbon的超时时长,真实值是(read+connect)*2,必须小于hystrix的超时时长,在熔断之前重新请求一次
